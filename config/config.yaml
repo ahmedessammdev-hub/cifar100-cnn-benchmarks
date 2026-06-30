@@ -1,0 +1,77 @@
+project:
+  name: "CNN Benchmark Lab"
+  description: "Comparing custom CNN vs Transfer Learning on CIFAR-100"
+  seed: 42
+
+data:
+  dataset: "cifar100"
+  num_classes: 100
+  image_size: 32
+  batch_size: 64
+  num_workers: 2
+  pin_memory: true
+  train_split: 0.8
+  val_split: 0.1
+  test_split: 0.1
+
+augmentation:
+  random_horizontal_flip: true
+  random_crop: true
+  random_crop_padding: 4
+  random_rotation: 15
+  color_jitter: true
+  color_jitter_brightness: 0.2
+  color_jitter_contrast: 0.2
+  color_jitter_saturation: 0.2
+  cutout: true
+  cutout_n_holes: 1
+  cutout_length: 8
+
+custom_cnn:
+  conv_layers: [64, 128, 256, 512]
+  kernel_size: 3
+  padding: 1
+  fc_layers: [256]
+  dropout: 0.5
+  use_batch_norm: true
+
+training:
+  epochs: 1
+  learning_rate: 0.001
+  weight_decay: 0.0001
+  scheduler: "cosine"
+  early_stopping_patience: 10
+  min_delta: 0.001
+
+transfer_learning:
+  models:
+    - name: "vgg16"
+      fine_tune_layers: 3
+      lr: 0.0001
+    - name: "resnet50"
+      fine_tune_layers: 3
+      lr: 0.0001
+    - name: "mobilenet_v2"
+      fine_tune_layers: 3
+      lr: 0.0001
+    - name: "inception_v3"
+      fine_tune_layers: 3
+      lr: 0.0001
+  feature_extraction:
+    epochs: 20
+    lr: 0.001
+  fine_tuning:
+    epochs: 30
+    lr: 0.0001
+
+wandb:
+  project: "cnn-benchmark-lab"
+  entity: null
+  log_model: true
+  log_gradients: false
+
+paths:
+  saved_models: "saved_models"
+  results: "results"
+  plots: "results/plots"
+  logs: "results/logs"
